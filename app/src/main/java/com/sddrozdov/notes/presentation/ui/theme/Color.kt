@@ -1,4 +1,4 @@
-package com.sddrozdov.notes.ui.theme
+package com.sddrozdov.notes.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

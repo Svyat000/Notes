@@ -1,4 +1,4 @@
-package com.sddrozdov.notes.ui.theme
+package com.sddrozdov.notes.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build
