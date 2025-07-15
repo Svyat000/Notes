@@ -1,8 +1,12 @@
 package com.sddrozdov.notes.domain.useCases
 
-class SwitchPinnedStatusUseCase {
+import com.sddrozdov.notes.domain.repository.NoteRepository
 
-    operator fun invoke(noteId: Int){
+class SwitchPinnedStatusUseCase(
+    private val repository: NoteRepository
+) {
 
+    operator fun invoke(noteId: Int) {
+        repository.switchPinnedStatus(noteId)
     }
 }

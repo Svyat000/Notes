@@ -1,12 +1,15 @@
 package com.sddrozdov.notes.domain.useCases
 
 import com.sddrozdov.notes.domain.model.Note
+import com.sddrozdov.notes.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
 
-class SearchNotesUseCase {
+class SearchNotesUseCase(
+    private val repository: NoteRepository
+) {
 
-    operator fun invoke(query: String) : Flow<List<Note>> {
-TODO()
+    operator fun invoke(query: String): Flow<List<Note>> {
+        return repository.searchNote(query)
     }
 
 }

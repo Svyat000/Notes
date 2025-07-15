@@ -1,8 +1,12 @@
 package com.sddrozdov.notes.domain.useCases
 
-class DeleteNoteUseCase {
+import com.sddrozdov.notes.domain.repository.NoteRepository
 
-    operator fun invoke(noteId: Int){
+class DeleteNoteUseCase(
+    private val repository: NoteRepository
+) {
 
+    operator fun invoke(noteId: Int) {
+        repository.deleteNote(noteId)
     }
 }
