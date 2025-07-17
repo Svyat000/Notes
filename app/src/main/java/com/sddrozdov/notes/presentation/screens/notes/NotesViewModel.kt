@@ -23,6 +23,9 @@ import kotlinx.coroutines.flow.update
 
 class NotesViewModel : ViewModel() {
 
+    //private val dispatcher = Executors.newCachedThreadPool().asCoroutineDispatcher()
+
+
     private val repository = NoteRepositoryImpl
 
     private val addNoteUseCase = AddNoteUseCase(repository)
@@ -41,18 +44,21 @@ class NotesViewModel : ViewModel() {
     private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
-
+        addSomeNotes()
         query
-            .flatMapLatest {
-                if (it.isBlank()) {
+            .onEach { input ->
+                _state.update { it.copy(query = input) }
+            }
+            .flatMapLatest { input ->
+                if (input.isBlank()) {
                     getAllNoteUseCase()
                 } else {
-                    searchNotesUseCase(it)
+                    searchNotesUseCase(input)
                 }
             }
-            .onEach {
-                val pinnedNotes = it.filter { it.isPinned }
-                val otherNotes = it.filter { !it.isPinned }
+            .onEach { notes ->
+                val pinnedNotes = notes.filter { it.isPinned }
+                val otherNotes = notes.filter { !it.isPinned }
                 _state.update { it.copy(pinnedNotes = pinnedNotes, otherNotes = otherNotes) }
             }
             .launchIn(scope)
@@ -66,10 +72,24 @@ class NotesViewModel : ViewModel() {
 
     }
 
+    //delete this test method
+    private fun addSomeNotes() {
+        repeat(50) {
+            addNoteUseCase(title = "Title №$it", content = "Content $it")
+        }
+    }
+
     fun processCommand(command: NotesCommand) {
         when (command) {
-            is NotesCommand.InputSearchQuery -> NotesCommand.InputSearchQuery(command.query)
+            is NotesCommand.InputSearchQuery -> query.update { command.query.trim() }
             is NotesCommand.SwitchedPinnedStatus -> switchPinnedNoteUseCase(command.id)
+            is NotesCommand.DeleteNote -> deleteNoteUseCase(command.noteId)
+            is NotesCommand.EditNote -> {
+                val note = getNoteUseCase(command.note.id)
+                val title = note.title
+                editNoteUseCase(note.copy(title = "$title edited"))
+
+            }
         }
     }
 
@@ -81,10 +101,16 @@ sealed interface NotesCommand {
 
     data class SwitchedPinnedStatus(val id: Int) : NotesCommand
 
+    data class DeleteNote(val noteId: Int) : NotesCommand
+
+    data class EditNote(val note: Note) : NotesCommand
+
 }
 
 data class NoteScreenState(
     val query: String = "",
     val pinnedNotes: List<Note> = listOf(),
     val otherNotes: List<Note> = listOf()
+
 )
+

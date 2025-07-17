@@ -1,5 +1,6 @@
 package com.sddrozdov.notes.data.repository
 
+import android.icu.util.TimeZone.SystemTimeZoneType
 import com.sddrozdov.notes.domain.model.Note
 import com.sddrozdov.notes.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
@@ -13,8 +14,6 @@ object NoteRepositoryImpl : NoteRepository {
     private val notesListFlow = MutableStateFlow<List<Note>>(listOf())
 
 
-    override fun addNote(note: Note) {
-
 //        val newNotes = notesListFlow.value.toMutableList()
 //        newNotes.add(note)
 //        notesListFlow.value = newNotes
@@ -25,8 +24,16 @@ object NoteRepositoryImpl : NoteRepository {
 //            }
 //        }
 
-        notesListFlow.update {
-            it + note
+    override fun addNote(title: String, content: String) {
+        notesListFlow.update { oldList ->
+            val note = Note(
+                id = oldList.size,
+                title = title,
+                content = content,
+                updatedAt = System.currentTimeMillis(),
+                isPinned = false
+            )
+            oldList + note
         }
     }
 
