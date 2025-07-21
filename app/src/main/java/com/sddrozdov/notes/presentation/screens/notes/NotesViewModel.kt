@@ -3,6 +3,7 @@
 package com.sddrozdov.notes.presentation.screens.notes
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.sddrozdov.notes.data.repository.NoteRepositoryImpl
 import com.sddrozdov.notes.domain.model.Note
 import com.sddrozdov.notes.domain.useCases.AddNoteUseCase
@@ -12,14 +13,13 @@ import com.sddrozdov.notes.domain.useCases.GetAllNotesUseCase
 import com.sddrozdov.notes.domain.useCases.GetNoteUseCase
 import com.sddrozdov.notes.domain.useCases.SearchNotesUseCase
 import com.sddrozdov.notes.domain.useCases.SwitchPinnedStatusUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class NotesViewModel : ViewModel() {
 
@@ -41,7 +41,7 @@ class NotesViewModel : ViewModel() {
     private val _state = MutableStateFlow(NoteScreenState())
     val state = _state.asStateFlow()
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    //private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
         addSomeNotes()
@@ -61,7 +61,7 @@ class NotesViewModel : ViewModel() {
                 val otherNotes = notes.filter { !it.isPinned }
                 _state.update { it.copy(pinnedNotes = pinnedNotes, otherNotes = otherNotes) }
             }
-            .launchIn(scope)
+            .launchIn(viewModelScope)
 
 
 //        scope.launch {
@@ -74,26 +74,29 @@ class NotesViewModel : ViewModel() {
 
     //delete this test method
     private fun addSomeNotes() {
-        repeat(50) {
-            addNoteUseCase(title = "Title №$it", content = "Content $it")
+        viewModelScope.launch {
+            repeat(50) {
+                addNoteUseCase(title = "Title №$it", content = "Content $it")
+            }
         }
+
     }
 
     fun processCommand(command: NotesCommand) {
-        when (command) {
-            is NotesCommand.InputSearchQuery -> query.update { command.query.trim() }
-            is NotesCommand.SwitchedPinnedStatus -> switchPinnedNoteUseCase(command.id)
-            is NotesCommand.DeleteNote -> deleteNoteUseCase(command.noteId)
-            is NotesCommand.EditNote -> {
-                val note = getNoteUseCase(command.note.id)
-                val title = note.title
-                editNoteUseCase(note.copy(title = "$title edited"))
+        viewModelScope.launch {
+            when (command) {
+                is NotesCommand.InputSearchQuery -> query.update { command.query.trim() }
+                is NotesCommand.SwitchedPinnedStatus -> switchPinnedNoteUseCase(command.id)
+                is NotesCommand.DeleteNote -> deleteNoteUseCase(command.noteId)
+                is NotesCommand.EditNote -> {
+                    val note = getNoteUseCase(command.note.id)
+                    val title = note.title
+                    editNoteUseCase(note.copy(title = "$title edited"))
 
+                }
             }
         }
     }
-
-
 }
 
 sealed interface NotesCommand {

@@ -7,7 +7,7 @@ class EditNoteUseCase(
     private val repository: NoteRepository
 ) {
 
-    operator fun invoke(note: Note) {
-        repository.editNote(note)
+    suspend operator fun invoke(note: Note) {
+        repository.editNote(note.copy(updatedAt = System.currentTimeMillis()))
     }
 }
