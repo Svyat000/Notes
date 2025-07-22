@@ -13,7 +13,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NotesTheme {
-                NoteScreen()
+                NoteScreen(
+                    onNoteClick = {
+
+                },
+                    onAddNoteClick = {
+
+                    }
+                )
             }
         }
     }
