@@ -2,6 +2,7 @@
 
 package com.sddrozdov.notes.presentation.screens.notes
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sddrozdov.notes.data.repository.NoteRepositoryImpl
@@ -17,9 +18,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class NotesViewModel : ViewModel() {
+class NotesViewModel(context: Context) : ViewModel() {
 
-    private val repository = NoteRepositoryImpl
+    private val repository = NoteRepositoryImpl.getInstance(context)
 
     private val getAllNoteUseCase = GetAllNotesUseCase(repository)
     private val searchNotesUseCase = SearchNotesUseCase(repository)
