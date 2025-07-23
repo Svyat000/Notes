@@ -10,7 +10,13 @@ import kotlinx.coroutines.flow.update
 
 object NoteRepositoryImpl : NoteRepository {
 
-    private val notesListFlow = MutableStateFlow<List<Note>>(listOf())
+    private val testData = mutableListOf<Note>().apply {
+        repeat(15) {
+            add(Note(it, "Title $it", "Content $it", System.currentTimeMillis(), false))
+        }
+    }
+
+    private val notesListFlow = MutableStateFlow<List<Note>>(testData)
 
 
 //        val newNotes = notesListFlow.value.toMutableList()

@@ -50,7 +50,7 @@ class CreateNoteViewModel : ViewModel() {
             }
 
 
-        CreateNoteCommand.Save -> {
+            CreateNoteCommand.Save -> {
             viewModelScope.launch {
                 _state.update { previuosState ->
                     if (previuosState is CreateNoteState.Creation) {
