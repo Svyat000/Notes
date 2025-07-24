@@ -1,19 +1,18 @@
 package com.sddrozdov.notes.presentation.screens.creation
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sddrozdov.notes.data.repository.NoteRepositoryImpl
 import com.sddrozdov.notes.domain.useCases.AddNoteUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CreateNoteViewModel(context: Context) : ViewModel() {
-
-    private val repository = NoteRepositoryImpl.getInstance(context)
-    private val addNoteUseCase = AddNoteUseCase(repository)
+@HiltViewModel
+class CreateNoteViewModel @Inject constructor(private val addNoteUseCase: AddNoteUseCase) :
+    ViewModel() {
 
     private val _state = MutableStateFlow<CreateNoteState>(CreateNoteState.Creation())
     val state = _state.asStateFlow()
@@ -52,21 +51,21 @@ class CreateNoteViewModel(context: Context) : ViewModel() {
 
 
             CreateNoteCommand.Save -> {
-            viewModelScope.launch {
-                _state.update { previuosState ->
-                    if (previuosState is CreateNoteState.Creation) {
-                        val title = previuosState.title
-                        val content = previuosState.content
-                        addNoteUseCase.invoke(title, content)
-                        CreateNoteState.Finished
-                    } else {
-                        previuosState
+                viewModelScope.launch {
+                    _state.update { previuosState ->
+                        if (previuosState is CreateNoteState.Creation) {
+                            val title = previuosState.title
+                            val content = previuosState.content
+                            addNoteUseCase.invoke(title, content)
+                            CreateNoteState.Finished
+                        } else {
+                            previuosState
+                        }
                     }
                 }
             }
         }
     }
-}
 
 }
 
