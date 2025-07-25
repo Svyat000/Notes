@@ -5,6 +5,7 @@ import com.sddrozdov.notes.data.model.NoteDbModel
 import com.sddrozdov.notes.data.toDbModel
 import com.sddrozdov.notes.data.toEntities
 import com.sddrozdov.notes.data.toEntity
+import com.sddrozdov.notes.domain.model.ContentItem
 import com.sddrozdov.notes.domain.model.Note
 import com.sddrozdov.notes.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
@@ -15,11 +16,12 @@ class NoteRepositoryImpl @Inject constructor(private val notesDao: NotesDao) : N
 
     override suspend fun addNote(
         title: String,
-        content: String,
+        content: List<ContentItem>,
         isPinned: Boolean,
         updatedAt: Long
     ) {
-        val noteDbModel = NoteDbModel(0, title, content, updatedAt, isPinned)
+        val note = Note(0, title, content, updatedAt, isPinned)
+        val noteDbModel = note.toDbModel()
         notesDao.addNote(noteDbModel)
     }
 

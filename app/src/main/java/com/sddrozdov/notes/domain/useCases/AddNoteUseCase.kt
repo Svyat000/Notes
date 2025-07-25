@@ -1,5 +1,6 @@
 package com.sddrozdov.notes.domain.useCases
 
+import com.sddrozdov.notes.domain.model.ContentItem
 import com.sddrozdov.notes.domain.repository.NoteRepository
 import javax.inject.Inject
 
@@ -9,7 +10,7 @@ class AddNoteUseCase @Inject constructor(
 
     suspend operator fun invoke(
         title: String,
-        content: String,
+        content: List<ContentItem>,
     ) {
         repository.addNote(
             title = title,

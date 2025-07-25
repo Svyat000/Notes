@@ -1,11 +1,12 @@
 package com.sddrozdov.notes.domain.repository
 
+import com.sddrozdov.notes.domain.model.ContentItem
 import com.sddrozdov.notes.domain.model.Note
 import kotlinx.coroutines.flow.Flow
 
 interface NoteRepository {
 
-    suspend fun addNote(title: String, content: String, isPinned: Boolean, updatedAt: Long)
+    suspend fun addNote(title: String, content: List<ContentItem>, isPinned: Boolean, updatedAt: Long)
 
     suspend fun deleteNote(noteId: Int)
 
