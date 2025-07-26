@@ -1,6 +1,8 @@
 package com.sddrozdov.notes.presentation.screens.creation
 
-import android.content.Context
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,13 +26,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sddrozdov.notes.presentation.ui.theme.CustomIcons
 import com.sddrozdov.notes.presentation.utils.DateFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,6 +44,13 @@ fun CreateNoteScreen(
 
     val state = viewModel.state.collectAsState()
     val currentState = state.value
+
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = {
+            Log.d("TEST",it.toString())
+        }
+    )
 
     when (currentState) {
         is CreateNoteState.Creation -> {
@@ -72,7 +80,20 @@ fun CreateNoteScreen(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "button back"
                             )
+                        },
+                        actions = {
+                            Icon(
+                                modifier = Modifier
+                                    .clickable {
+                                        imagePicker.launch("image/*")
+                                    }
+                                    .padding(end = 24.dp),
+                                imageVector = CustomIcons.AddPhoto,
+                                contentDescription = "Добавить изображение",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                            )
                         }
+
                     )
                 }
             ) { innerPadding ->
@@ -168,6 +189,8 @@ fun CreateNoteScreen(
                 onFinished()
             }
         }
+
+        else -> {}
     }
 
 }

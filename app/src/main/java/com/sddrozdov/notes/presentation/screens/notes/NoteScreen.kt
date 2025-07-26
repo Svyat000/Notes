@@ -2,7 +2,6 @@
 
 package com.sddrozdov.notes.presentation.screens.notes
 
-import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,15 +34,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sddrozdov.notes.R
+import com.sddrozdov.notes.domain.model.ContentItem
 import com.sddrozdov.notes.domain.model.Note
 import com.sddrozdov.notes.presentation.ui.theme.OtherNotesColors
 import com.sddrozdov.notes.presentation.ui.theme.PinnedNotesColors
@@ -58,7 +56,8 @@ fun NoteScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    Scaffold(modifier = modifier,
+    Scaffold(
+        modifier = modifier,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddNoteClick,
@@ -286,15 +285,16 @@ fun NoteCard(
 
         )
         Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = note.content,
-            fontSize = 16.sp,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Medium
 
-
-        )
+        note.content.filterIsInstance<ContentItem.Text>().joinToString("\n") { it.content }.let {
+            Text(
+                text = it,
+                fontSize = 16.sp,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Medium
+            )
+        }
     }
 }

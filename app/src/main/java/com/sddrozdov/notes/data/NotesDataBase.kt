@@ -6,9 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.sddrozdov.notes.data.model.NoteDbModel
 
-@Database(entities = [NoteDbModel::class], version = 1, exportSchema = false)
+@Database(entities = [NoteDbModel::class], version = 2, exportSchema = false)
 abstract class NotesDataBase : RoomDatabase() {
     abstract fun notesDao(): NotesDao
+
     companion object {
 
         private var instance: NotesDataBase? = null
@@ -25,7 +26,7 @@ abstract class NotesDataBase : RoomDatabase() {
                     context = context,
                     klass = NotesDataBase::class.java,
                     name = "notes.db"
-                ).build().also {
+                ).fallbackToDestructiveMigration(dropAllTables = true).build().also {
                     instance = it
                 }
             }

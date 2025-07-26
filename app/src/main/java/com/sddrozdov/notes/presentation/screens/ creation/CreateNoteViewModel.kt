@@ -2,6 +2,7 @@ package com.sddrozdov.notes.presentation.screens.creation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sddrozdov.notes.domain.model.ContentItem
 import com.sddrozdov.notes.domain.useCases.AddNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,8 +56,8 @@ class CreateNoteViewModel @Inject constructor(private val addNoteUseCase: AddNot
                     _state.update { previuosState ->
                         if (previuosState is CreateNoteState.Creation) {
                             val title = previuosState.title
-                            val content = previuosState.content
-                            addNoteUseCase.invoke(title, content)
+                            val content = ContentItem.Text(previuosState.content)
+                            addNoteUseCase.invoke(title, listOf(content))
                             CreateNoteState.Finished
                         } else {
                             previuosState
@@ -64,6 +65,8 @@ class CreateNoteViewModel @Inject constructor(private val addNoteUseCase: AddNot
                     }
                 }
             }
+
+            else -> {}
         }
     }
 
@@ -85,8 +88,7 @@ sealed interface CreateNoteState {
         val title: String = "",
         val content: String = "",
         val isSaveEnable: Boolean = false
-    ) :
-        CreateNoteState
+    ) : CreateNoteState
 
     data object Finished : CreateNoteState
 }
