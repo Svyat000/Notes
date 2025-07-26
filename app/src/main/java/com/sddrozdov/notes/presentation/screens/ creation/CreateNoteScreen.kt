@@ -1,12 +1,12 @@
 package com.sddrozdov.notes.presentation.screens.creation
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sddrozdov.notes.domain.model.ContentItem
 import com.sddrozdov.notes.presentation.ui.theme.CustomIcons
 import com.sddrozdov.notes.presentation.utils.DateFormatter
 
@@ -47,8 +48,10 @@ fun CreateNoteScreen(
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
-        onResult = {
-            Log.d("TEST",it.toString())
+        onResult = { uri ->
+            uri?.let {
+                viewModel.processCommand(CreateNoteCommand.AddImage(it))
+            }
         }
     )
 
@@ -133,33 +136,38 @@ fun CreateNoteScreen(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
-                            .weight(1f),
-                        value = currentState.content,
-                        onValueChange = { viewModel.processCommand(CreateNoteCommand.InputContent(it)) },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                        ),
-                        textStyle = TextStyle(
-                            fontSize = 16.sp,
 
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        placeholder = {
-                            Text(
-                                text = "Введите заметку",
-                                fontSize = 16.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-                            )
+                    LazyColumn(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        currentState.content.forEachIndexed { index, contentItem ->
+
+                            item(key = index) {
+                                when (contentItem) {
+                                    is ContentItem.Image -> {
+                                        TextContent(
+                                            text = contentItem.url,
+                                            onTextChange = {}
+                                        )
+                                    }
+
+                                    is ContentItem.Text -> {
+                                        TextContent(
+                                            text = contentItem.content,
+                                            onTextChange = {
+                                                viewModel.processCommand(
+                                                    CreateNoteCommand.InputContent(
+                                                        content = it,
+                                                        index = index
+                                                    )
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+                            }
                         }
-                    )
-
+                    }
                     Button(
                         modifier = Modifier
                             .padding(horizontal = 24.dp)
@@ -168,7 +176,7 @@ fun CreateNoteScreen(
                             viewModel.processCommand(CreateNoteCommand.Save)
                         },
                         shape = RoundedCornerShape(10.dp),
-                        enabled = currentState.isSaveEnable,
+                        enabled = currentState.isSaveEnabled,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
@@ -193,4 +201,37 @@ fun CreateNoteScreen(
         else -> {}
     }
 
+}
+
+@Composable
+private fun TextContent(
+    modifier: Modifier = Modifier,
+    text: String,
+    onTextChange: (String) -> Unit,
+) {
+    TextField(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        value = text,
+        onValueChange = onTextChange,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        ),
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+
+            color = MaterialTheme.colorScheme.onSurface
+        ),
+        placeholder = {
+            Text(
+                text = "Введите заметку",
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+            )
+        }
+    )
 }
