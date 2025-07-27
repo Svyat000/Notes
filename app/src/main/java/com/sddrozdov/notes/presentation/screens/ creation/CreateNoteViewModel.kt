@@ -89,17 +89,16 @@ class CreateNoteViewModel @Inject constructor(private val addNoteUseCase: AddNot
                         previuosState
                     }
                 }
-
             }
 
             else -> {}
         }
     }
-
 }
 
 sealed interface CreateNoteCommand {
     data class InputTitle(val title: String) : CreateNoteCommand
+
     data class InputContent(val content: String, val index: Int) : CreateNoteCommand
 
     data class AddImage(val uri: Uri) : CreateNoteCommand
@@ -107,7 +106,6 @@ sealed interface CreateNoteCommand {
     data object Save : CreateNoteCommand
 
     data object Back : CreateNoteCommand
-
 
 }
 
