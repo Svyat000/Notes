@@ -91,6 +91,20 @@ class CreateNoteViewModel @Inject constructor(private val addNoteUseCase: AddNot
                 }
             }
 
+            is CreateNoteCommand.DeleteImage -> {
+                _state.update { previuosState ->
+                    if (previuosState is CreateNoteState.Creation) {
+                        previuosState.content.toMutableList().apply {
+                            removeAt(command.index)
+                        }.let {
+                            previuosState.copy(content = it)
+                        }
+                    } else {
+                        previuosState
+                    }
+                }
+            }
+
             else -> {}
         }
     }
@@ -102,6 +116,8 @@ sealed interface CreateNoteCommand {
     data class InputContent(val content: String, val index: Int) : CreateNoteCommand
 
     data class AddImage(val uri: Uri) : CreateNoteCommand
+
+    data class DeleteImage(val index: Int) : CreateNoteCommand
 
     data object Save : CreateNoteCommand
 
