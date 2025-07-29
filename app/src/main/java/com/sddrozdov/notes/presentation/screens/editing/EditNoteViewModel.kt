@@ -86,7 +86,10 @@ class EditNoteViewModel @AssistedInject constructor(
                     _state.update { previuosState ->
                         if (previuosState is EditNoteState.Editing) {
                             val note = previuosState.note
-                            editNoteUseCase(note)
+                            val content = note.content.filter {
+                                it !is ContentItem.Text || it.content.isNotBlank()
+                            }
+                            editNoteUseCase(note.copy(content = content))
                             EditNoteState.Finished
                         } else {
                             previuosState
