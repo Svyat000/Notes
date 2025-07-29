@@ -1,7 +1,7 @@
 package com.sddrozdov.notes.data.repository
 
+import com.sddrozdov.notes.data.ImageFileManager
 import com.sddrozdov.notes.data.NotesDao
-import com.sddrozdov.notes.data.model.NoteDbModel
 import com.sddrozdov.notes.data.toDbModel
 import com.sddrozdov.notes.data.toEntities
 import com.sddrozdov.notes.data.toEntity
@@ -12,7 +12,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class NoteRepositoryImpl @Inject constructor(private val notesDao: NotesDao) : NoteRepository {
+class NoteRepositoryImpl @Inject constructor(
+    private val notesDao: NotesDao,
+    private val imageFileManager: ImageFileManager,
+) : NoteRepository {
 
     override suspend fun addNote(
         title: String,
@@ -20,17 +23,33 @@ class NoteRepositoryImpl @Inject constructor(private val notesDao: NotesDao) : N
         isPinned: Boolean,
         updatedAt: Long
     ) {
-        val note = Note(0, title, content, updatedAt, isPinned)
+        val note = Note(0, title, content.processForStorage(), updatedAt, isPinned)
         val noteDbModel = note.toDbModel()
         notesDao.addNote(noteDbModel)
     }
 
     override suspend fun deleteNote(noteId: Int) {
+        val note = notesDao.getNote(noteId).toEntity()
         notesDao.deleteNote(noteId)
+
+        note.content.filterIsInstance<ContentItem.Image>().map { it.url }.forEach {
+            imageFileManager.deleteImage(it)
+        }
     }
 
     override suspend fun editNote(note: Note) {
-        notesDao.addNote(note.toDbModel())
+        val oldNote = notesDao.getNote(note.id).toEntity()
+        val oldUrls = oldNote.content.filterIsInstance<ContentItem.Image>().map { it.url }
+        val newUrls = note.content.filterIsInstance<ContentItem.Image>().map { it.url }
+        val removedUrls = oldUrls - newUrls
+
+        removedUrls.forEach {
+            imageFileManager.deleteImage(it)
+        }
+
+        val processedContent = note.content.processForStorage()
+        val processedNote = note.copy(content = processedContent)
+        notesDao.addNote(processedNote.toDbModel())
     }
 
     override fun getAllNotes(): Flow<List<Note>> {
@@ -49,4 +68,23 @@ class NoteRepositoryImpl @Inject constructor(private val notesDao: NotesDao) : N
         notesDao.switchPinnedStatus(noteId)
     }
 
+    private suspend fun List<ContentItem>.processForStorage(): List<ContentItem> {
+        return map { contentItem ->
+            when (contentItem) {
+                is ContentItem.Text -> {
+                    contentItem
+                }
+
+                is ContentItem.Image -> {
+                    if (imageFileManager.isInternal(contentItem.url)) {
+                        contentItem
+                    } else {
+                        val internalPath =
+                            imageFileManager.copyImageToInternalStorage(contentItem.url)
+                        ContentItem.Image(internalPath)
+                    }
+                }
+            }
+        }
+    }
 }

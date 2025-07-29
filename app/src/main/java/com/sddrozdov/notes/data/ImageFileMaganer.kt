@@ -1,7 +1,6 @@
 package com.sddrozdov.notes.data
 
 import android.content.Context
-import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -41,7 +40,7 @@ class ImageFileManager @Inject constructor(
         }
     }
 
-    private fun isInternal(url: String): Boolean {
+    fun isInternal(url: String): Boolean {
         return url.startsWith(imageDir.absolutePath)
 
     }
