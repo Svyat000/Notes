@@ -36,9 +36,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -73,7 +75,7 @@ fun NoteScreen(
                 Icon(
                     painter = painterResource(R.drawable.ic_add_note),
                     //imageVector = Icons.Default.Add,
-                    contentDescription = "Add note button"
+                    contentDescription = stringResource(R.string.add_note_button)
                 )
 
             }
@@ -87,7 +89,7 @@ fun NoteScreen(
             item {
                 Title(
                     modifier.padding(horizontal = 24.dp),
-                    text = "All Notes"
+                    text = stringResource(R.string.all_notes)
                 )
             }
             item {
@@ -105,7 +107,7 @@ fun NoteScreen(
             item {
                 Subtitle(
                     modifier.padding(horizontal = 24.dp),
-                    text = "Pinned"
+                    text = stringResource(R.string.pinned)
                 )
             }
             item {
@@ -145,7 +147,7 @@ fun NoteScreen(
             item {
                 Subtitle(
                     modifier.padding(horizontal = 24.dp),
-                    text = "Others"
+                    text = stringResource(R.string.others)
                 )
             }
 
@@ -243,7 +245,7 @@ private fun SearchBar(
         onValueChange = onQueryChange,
         placeholder = {
             Text(
-                text = "Search...",
+                text = stringResource(R.string.search),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -257,7 +259,7 @@ private fun SearchBar(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search notes",
+                contentDescription = stringResource(R.string.search_notes),
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }, shape = RoundedCornerShape(10.dp)
@@ -354,7 +356,7 @@ fun NoteCardWithImage(
         Box {
             AsyncImage(
                 modifier = Modifier
-                    .heightIn(120.dp)
+                    .heightIn(max = 120.dp)
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp)),
                 model = imageUrl,
@@ -364,6 +366,12 @@ fun NoteCardWithImage(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(Color.Transparent, MaterialTheme.colorScheme.onSurface)
+                        )
+                    )
                     .padding(16.dp)
                     .align(Alignment.BottomStart)
             ) {

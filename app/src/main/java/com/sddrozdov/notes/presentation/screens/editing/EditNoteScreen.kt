@@ -26,11 +26,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sddrozdov.notes.R
 import com.sddrozdov.notes.presentation.ui.theme.Content
 import com.sddrozdov.notes.presentation.ui.theme.CustomIcons
 import com.sddrozdov.notes.presentation.utils.DateFormatter
@@ -66,7 +68,7 @@ fun EditNoteScreen(
                     TopAppBar(
                         title = {
                             Text(
-                                text = "Редактирование заметки",
+                                text = stringResource(R.string.edit_note),
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onBackground
@@ -85,7 +87,7 @@ fun EditNoteScreen(
                                     }
                                     .padding(end = 16.dp),
                                 imageVector = CustomIcons.AddPhoto,
-                                contentDescription = "Добавить изображение",
+                                contentDescription = stringResource(R.string.add_image),
                                 tint = MaterialTheme.colorScheme.onSurface,
                             )
                             Icon(
@@ -95,7 +97,7 @@ fun EditNoteScreen(
                                         viewModel.processCommand(EditNoteCommand.Delete)
                                     },
                                 imageVector = Icons.Outlined.Delete,
-                                contentDescription = "Удалить заметку"
+                                contentDescription = stringResource(R.string.delete_note)
                             )
                         },
                         navigationIcon = {
@@ -106,7 +108,7 @@ fun EditNoteScreen(
                                         viewModel.processCommand(EditNoteCommand.Back)
                                     },
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "button back"
+                                contentDescription = stringResource(R.string.button_back)
                             )
                         }
                     )
@@ -134,8 +136,7 @@ fun EditNoteScreen(
                         ),
                         placeholder = {
                             Text(
-
-                                text = "Title",
+                                text = stringResource(R.string.title),
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
@@ -175,11 +176,9 @@ fun EditNoteScreen(
                             disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
                         ),
                     ) {
-                        Text(text = "Сохранить")
-
+                        Text(text = stringResource(R.string.save))
                     }
                 }
-
             }
         }
 
@@ -189,41 +188,6 @@ fun EditNoteScreen(
             }
 
         }
-
         EditNoteState.Initial -> {}
     }
-
-}
-
-@Composable
-private fun TextContent(
-    modifier: Modifier = Modifier,
-    text: String,
-    onTextChanged: (String) -> Unit,
-) {
-    TextField(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
-        value = text,
-        onValueChange = onTextChanged,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-        ),
-        textStyle = TextStyle(
-            fontSize = 16.sp,
-
-            color = MaterialTheme.colorScheme.onSurface
-        ),
-        placeholder = {
-            Text(
-                text = "Введите заметку",
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-            )
-        }
-    )
 }

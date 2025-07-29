@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Notes</string>
+    <string name="create_note">Creating a note</string>
+    <string name="button_back">Back button</string>
+    <string name="add_image">Add image</string>
+    <string name="title">Title</string>
+    <string name="save">Save</string>
+    <string name="edit_note">Editing a note</string>
+    <string name="delete_note">Delete note</string>
+    <string name="add_note_button">Add note button</string>
+    <string name="all_notes">All notes</string>
+    <string name="pinned">Pinned</string>
+    <string name="others">Others</string>
+    <string name="search">Search…</string>
+    <string name="search_notes">Search notes</string>
+    <string name="image_from_gallery">Image from gallery</string>
+    <string name="delete_image">Delete image</string>
+    <string name="enter_notes">Enter a note</string>
+    <string name="just_now">Just now</string>
+    <string name="hours_ago">%1$d hours ago</string>
 </resources>

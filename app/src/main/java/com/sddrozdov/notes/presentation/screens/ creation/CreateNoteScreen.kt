@@ -25,11 +25,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sddrozdov.notes.R
 import com.sddrozdov.notes.presentation.ui.theme.Content
 import com.sddrozdov.notes.presentation.ui.theme.CustomIcons
 import com.sddrozdov.notes.presentation.utils.DateFormatter
@@ -62,7 +64,7 @@ fun CreateNoteScreen(
                     TopAppBar(
                         title = {
                             Text(
-                                text = "Создание заметки",
+                                text = stringResource(R.string.create_note),
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onBackground
@@ -80,7 +82,7 @@ fun CreateNoteScreen(
                                         viewModel.processCommand(CreateNoteCommand.Back)
                                     },
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "button back"
+                                contentDescription = stringResource(R.string.button_back)
                             )
                         },
                         actions = {
@@ -91,7 +93,7 @@ fun CreateNoteScreen(
                                     }
                                     .padding(end = 24.dp),
                                 imageVector = CustomIcons.AddPhoto,
-                                contentDescription = "Добавить изображение",
+                                contentDescription = stringResource(R.string.add_image),
                                 tint = MaterialTheme.colorScheme.onSurface,
                             )
                         }
@@ -121,8 +123,7 @@ fun CreateNoteScreen(
                         ),
                         placeholder = {
                             Text(
-
-                                text = "Title",
+                                text = stringResource(R.string.title),
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
@@ -167,7 +168,7 @@ fun CreateNoteScreen(
                             disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
                         ),
                     ) {
-                        Text(text = "Сохранить")
+                        Text(text = stringResource(R.string.save))
 
                     }
                 }

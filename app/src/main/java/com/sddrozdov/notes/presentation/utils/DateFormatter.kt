@@ -1,5 +1,8 @@
 package com.sddrozdov.notes.presentation.utils
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.sddrozdov.notes.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
@@ -14,15 +17,16 @@ object DateFormatter {
         return formatter.format(System.currentTimeMillis())
     }
 
+    @Composable
     fun formatDateToString(timestamp: Long): String {
 
         val now = System.currentTimeMillis()
         val diff = now - timestamp
         return when {
-            diff < millisInHour -> "Только что"
+            diff < millisInHour -> stringResource(R.string.just_now)
             diff < millisInDay -> {
                 val hours = TimeUnit.MILLISECONDS.toHours(diff)
-                "$hours часов назад"
+                stringResource(R.string.hours_ago, hours)
             }
 
             else -> {
