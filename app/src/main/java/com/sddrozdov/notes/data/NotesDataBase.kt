@@ -4,9 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.sddrozdov.notes.data.model.ContentItemDbModel
 import com.sddrozdov.notes.data.model.NoteDbModel
 
-@Database(entities = [NoteDbModel::class], version = 2, exportSchema = false)
+@Database(
+    entities = [NoteDbModel::class, ContentItemDbModel::class],
+    version = 3,
+    exportSchema = false
+)
 abstract class NotesDataBase : RoomDatabase() {
     abstract fun notesDao(): NotesDao
 
